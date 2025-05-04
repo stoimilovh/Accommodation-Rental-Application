@@ -1,10 +1,11 @@
 package mk.ukim.finki.emt.lab.web;
 
-import mk.ukim.finki.emt.lab.model.Host;
-import mk.ukim.finki.emt.lab.model.Review;
-import mk.ukim.finki.emt.lab.model.dto.HostDTO;
-import mk.ukim.finki.emt.lab.model.dto.ReviewDTO;
-import mk.ukim.finki.emt.lab.service.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
+import mk.ukim.finki.emt.lab.model.domain.Review;
+import mk.ukim.finki.emt.lab.model.dto.CreateReviewDTO;
+import mk.ukim.finki.emt.lab.model.dto.DisplayReviewDTO;
+import mk.ukim.finki.emt.lab.service.application.ReviewApplicationService;
+import mk.ukim.finki.emt.lab.service.domain.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,46 +15,69 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/review")
 public class ReviewController {
-    private final ReviewService reviewService;
+    private final ReviewApplicationService reviewApplicationService;
 
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
+    public ReviewController(ReviewApplicationService reviewService) {
+        this.reviewApplicationService = reviewService;
     }
 
+    @Operation(
+            summary = "Get all reviews",
+            description = "Returns a list of all reviews with their comments, ratings, and associated accommodation IDs."
+    )
     @GetMapping
-    public List<Review> findAll() {
-        return reviewService.findAll();
+    public List<DisplayReviewDTO> findAll() {
+        return reviewApplicationService.findAll();
     }
 
+    @Operation(
+            summary = "Get a review by ID",
+            description = "Retrieves a review based on its unique ID."
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Review> findById(@PathVariable Long id) {
-        Optional<Review> review = reviewService.findById(id);
-        return review.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<Review> save(@RequestBody ReviewDTO reviewDTO) {
-        Optional<Review> createdReview = reviewService.save(reviewDTO);
-        return createdReview.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<Review> update(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-        Optional<Review> updatedReview = reviewService.update(id, reviewDTO);
-        return updatedReview.map(ResponseEntity::ok)
+    public ResponseEntity<DisplayReviewDTO> findById(@PathVariable Long id) {
+        return reviewApplicationService.findById(id).map(review -> ResponseEntity.ok().body(review))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Create a new review",
+            description = "Creates a review using the provided comment, rating, and accommodation ID."
+    )
+    @PostMapping("/add")
+    public ResponseEntity<DisplayReviewDTO> save(@RequestBody CreateReviewDTO createReviewDTO) {
+        return reviewApplicationService.save(createReviewDTO).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+    @Operation(
+            summary = "Update an existing review",
+            description = "Updates the comment and rating of a review based on its ID."
+    )
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<DisplayReviewDTO> update(@PathVariable Long id, @RequestBody CreateReviewDTO createReviewDTO) {
+        return this.reviewApplicationService.update(id, createReviewDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete a review",
+            description = "Deletes a review based on its ID."
+    )
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        reviewService.delete(id);
+        reviewApplicationService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Get average rating for accommodation",
+            description = "Returns the average review rating for a specific accommodation by ID."
+    )
     @GetMapping("/average/{id}")
     public Double average(@PathVariable Long id) {
-        return reviewService.averageRating(id);
+        return reviewApplicationService.averageRating(id);
     }
 
 }

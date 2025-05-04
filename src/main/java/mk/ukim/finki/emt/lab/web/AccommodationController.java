@@ -1,44 +1,85 @@
 package mk.ukim.finki.emt.lab.web;
 
-import mk.ukim.finki.emt.lab.model.Accommodation;
-import mk.ukim.finki.emt.lab.model.dto.AccommodationDTO;
-import mk.ukim.finki.emt.lab.service.AccommodationService;
+import io.swagger.v3.oas.annotations.Operation;
+import mk.ukim.finki.emt.lab.model.domain.Accommodation;
+import mk.ukim.finki.emt.lab.model.domain.Category;
+import mk.ukim.finki.emt.lab.model.domain.Host;
+import mk.ukim.finki.emt.lab.model.dto.CreateAccommodationDTO;
+import mk.ukim.finki.emt.lab.model.dto.DisplayAccommodationDTO;
+import mk.ukim.finki.emt.lab.service.application.AccommodationApplicationService;
+import mk.ukim.finki.emt.lab.service.domain.AccommodationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/accommodations")
+    @RequestMapping("/api/accommodations")
 public class AccommodationController {
-    private final AccommodationService accommodationService;
+    private final AccommodationApplicationService accommodationApplicationService;
 
-    public AccommodationController(AccommodationService accommodationService) {
-        this.accommodationService = accommodationService;
+    public AccommodationController(AccommodationApplicationService accommodationApplicationService) {
+        this.accommodationApplicationService = accommodationApplicationService;
     }
 
+    @Operation(
+            summary = "Get all accommodations",
+            description = "Returns a list of all accommodations with their name, category, host ID, and number of rooms."
+    )
     @GetMapping
-    public List<Accommodation> findAll() {
-        return accommodationService.findAll();
+    public List<DisplayAccommodationDTO> findAll(@RequestParam(required = false) String name,
+                                                 @RequestParam(required = false) Category category,
+                                                 @RequestParam(required = false) Host host,
+                                                 @RequestParam(required = false) Integer numRooms,
+                                                 @RequestParam(required = false) Boolean isRented) {
+
+        List<DisplayAccommodationDTO> displayAccommodationDTOS = accommodationApplicationService.findAll(
+                name, category, host, numRooms, isRented
+        );
+
+        return displayAccommodationDTOS;
     }
 
+    @Operation(
+            summary = "Get accommodation by ID",
+            description = "Fetches details for a single accommodation specified by its ID."
+    )
     @GetMapping("/{id}")
-    public Optional<Accommodation> findById(@PathVariable Long id) {
-        return accommodationService.findById(id);
+    public  ResponseEntity<DisplayAccommodationDTO> findById(@PathVariable Long id) {
+        return accommodationApplicationService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Add new accommodation",
+            description = "Creates a new accommodation using the provided data."
+    )
     @PostMapping("/add")
-    public Optional<Accommodation> save(@RequestBody AccommodationDTO accommodation) {
-        return accommodationService.save(accommodation);
+    public  ResponseEntity<DisplayAccommodationDTO> save(@RequestBody CreateAccommodationDTO accommodation) {
+        return accommodationApplicationService.save(accommodation).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
+    @Operation(
+            summary = "Delete accommodation by ID",
+            description = "Deletes an accommodation from the system using its ID."
+    )
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable Long id) {
-        accommodationService.delete(id);
+        accommodationApplicationService.delete(id);
     }
 
+    @Operation(
+            summary = "Mark accommodation as rented",
+            description = "Marks an accommodation as rented using its ID."
+    )
     @PatchMapping("/rent/{id}")
-    public Optional<Accommodation> markAsRented(@PathVariable Long id) {
-        return accommodationService.markAsRented(id);
+    public ResponseEntity<DisplayAccommodationDTO> markAsRented(@PathVariable Long id) {
+        return this.accommodationApplicationService.markAsRented(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
