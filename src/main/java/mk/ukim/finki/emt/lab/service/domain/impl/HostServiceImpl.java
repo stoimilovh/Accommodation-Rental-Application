@@ -1,11 +1,15 @@
 package mk.ukim.finki.emt.lab.service.domain.impl;
 
+import mk.ukim.finki.emt.lab.events.HostChangedEvent;
 import mk.ukim.finki.emt.lab.model.domain.Country;
 import mk.ukim.finki.emt.lab.model.domain.Host;
 import mk.ukim.finki.emt.lab.model.dto.CreateHostDTO;
+import mk.ukim.finki.emt.lab.projections.HostNameSurnameProjection;
 import mk.ukim.finki.emt.lab.repository.HostRepository;
+import mk.ukim.finki.emt.lab.repository.HostsByCountryRepository;
 import mk.ukim.finki.emt.lab.service.domain.CountryService;
 import mk.ukim.finki.emt.lab.service.domain.HostService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +20,14 @@ public class HostServiceImpl implements HostService {
 
     private final HostRepository hostRepository;
     private final CountryService countryService;
+    private final HostsByCountryRepository hostsByCountryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public HostServiceImpl(HostRepository hostRepository, CountryService countryService) {
+    public HostServiceImpl(HostRepository hostRepository, CountryService countryService, HostsByCountryRepository hostsByCountryRepository, ApplicationEventPublisher eventPublisher) {
         this.hostRepository = hostRepository;
         this.countryService = countryService;
+        this.hostsByCountryRepository = hostsByCountryRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -37,7 +45,9 @@ public class HostServiceImpl implements HostService {
         Optional<Country> countryOptional = this.countryService.findById(hostt.getCountry().getId());
         if (countryOptional.isPresent()) {
             Host host = new Host(hostt.getName(), hostt.getSurname(), countryOptional.get());
-            return Optional.of(this.hostRepository.save(host));
+            Host savedHost = this.hostRepository.save(host);
+            eventPublisher.publishEvent(new HostChangedEvent(savedHost));
+            return Optional.of(savedHost);
         }
         return Optional.empty();
     }
@@ -55,12 +65,27 @@ public class HostServiceImpl implements HostService {
             if(hostt.getCountry() != null) {
                 host.setCountry(countryService.findById(hostt.getCountry().getId()).orElse(null));
             }
-            return hostRepository.save(host);
+            Host updatedHost = hostRepository.save(host);
+            eventPublisher.publishEvent(new HostChangedEvent(updatedHost));
+            return updatedHost;
         });
     }
 
     @Override
     public void delete(Long id) {
-        this.hostRepository.deleteById(id);
+        this.hostRepository.findById(id).ifPresent(host -> {
+            hostRepository.deleteById(id);
+            eventPublisher.publishEvent(new HostChangedEvent(host));
+        });
+    }
+
+    @Override
+    public void refreshMaterializedView(){
+        hostsByCountryRepository.refreshMaterializedView();
+    }
+
+    @Override
+    public List<HostNameSurnameProjection> getAllHostNames() {
+        return hostRepository.findAllBy();
     }
 }

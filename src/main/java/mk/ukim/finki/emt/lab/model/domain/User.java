@@ -35,8 +35,25 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Host host;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<TemporaryReservation> temporaryReservations;
+
 
     public User() {
+    }
+
+    public User(String username, String password, String name, String surname, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled, Role role, Host host, List<TemporaryReservation> temporaryReservations) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.isAccountNonExpired = isAccountNonExpired;
+        this.isAccountNonLocked = isAccountNonLocked;
+        this.isCredentialsNonExpired = isCredentialsNonExpired;
+        this.isEnabled = isEnabled;
+        this.role = role;
+        this.host = host;
+        this.temporaryReservations = temporaryReservations;
     }
 
     public User(String username, String password, String name, String surname, Role role) {

@@ -1,16 +1,13 @@
 package mk.ukim.finki.emt.lab.web;
 
 import io.swagger.v3.oas.annotations.Operation;
-import mk.ukim.finki.emt.lab.model.domain.Review;
 import mk.ukim.finki.emt.lab.model.dto.CreateReviewDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayReviewDTO;
 import mk.ukim.finki.emt.lab.service.application.ReviewApplicationService;
-import mk.ukim.finki.emt.lab.service.domain.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/review")

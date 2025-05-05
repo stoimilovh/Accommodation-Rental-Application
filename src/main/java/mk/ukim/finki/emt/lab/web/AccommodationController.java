@@ -1,27 +1,27 @@
 package mk.ukim.finki.emt.lab.web;
 
 import io.swagger.v3.oas.annotations.Operation;
-import mk.ukim.finki.emt.lab.model.domain.Accommodation;
 import mk.ukim.finki.emt.lab.model.domain.Category;
 import mk.ukim.finki.emt.lab.model.domain.Host;
 import mk.ukim.finki.emt.lab.model.dto.CreateAccommodationDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayAccommodationDTO;
+import mk.ukim.finki.emt.lab.model.views.AccommodationCountByHostView;
+import mk.ukim.finki.emt.lab.repository.AccommodationCountByHostRepository;
 import mk.ukim.finki.emt.lab.service.application.AccommodationApplicationService;
-import mk.ukim.finki.emt.lab.service.domain.AccommodationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
     @RequestMapping("/api/accommodations")
 public class AccommodationController {
     private final AccommodationApplicationService accommodationApplicationService;
+    private final AccommodationCountByHostRepository accommodationCountByHostRepository;
 
-    public AccommodationController(AccommodationApplicationService accommodationApplicationService) {
+    public AccommodationController(AccommodationApplicationService accommodationApplicationService, AccommodationCountByHostRepository accommodationCountByHostRepository) {
         this.accommodationApplicationService = accommodationApplicationService;
+        this.accommodationCountByHostRepository = accommodationCountByHostRepository;
     }
 
     @Operation(
@@ -81,5 +81,9 @@ public class AccommodationController {
         return this.accommodationApplicationService.markAsRented(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/by-host")
+    public List<AccommodationCountByHostView> getAccommodationCountByHost() {
+        return accommodationCountByHostRepository.findAll();
     }
 }

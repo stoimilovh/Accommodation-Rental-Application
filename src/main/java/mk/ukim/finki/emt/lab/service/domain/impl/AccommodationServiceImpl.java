@@ -3,26 +3,27 @@ package mk.ukim.finki.emt.lab.service.domain.impl;
 import mk.ukim.finki.emt.lab.model.domain.Accommodation;
 import mk.ukim.finki.emt.lab.model.domain.Category;
 import mk.ukim.finki.emt.lab.model.domain.Host;
-import mk.ukim.finki.emt.lab.model.dto.DisplayAccommodationDTO;
+import mk.ukim.finki.emt.lab.repository.AccommodationCountByHostRepository;
 import mk.ukim.finki.emt.lab.repository.AccommodationRepository;
 import mk.ukim.finki.emt.lab.service.domain.AccommodationService;
 import mk.ukim.finki.emt.lab.service.domain.HostService;
-import mk.ukim.finki.emt.lab.service.domain.specification.FieldFilterSpecification;
+import mk.ukim.finki.emt.lab.service.specification.FieldFilterSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service("domainAccommodationService")
 public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
     private final HostService hostService;
+    private final AccommodationCountByHostRepository accommodationCountByHostRepository;
 
-    public AccommodationServiceImpl(AccommodationRepository accommodationRepository, HostService hostService) {
+    public AccommodationServiceImpl(AccommodationRepository accommodationRepository, HostService hostService, AccommodationCountByHostRepository accommodationCountByHostRepository) {
         this.accommodationRepository = accommodationRepository;
         this.hostService = hostService;
+        this.accommodationCountByHostRepository = accommodationCountByHostRepository;
     }
 
     @Override
@@ -101,5 +102,10 @@ public class AccommodationServiceImpl implements AccommodationService {
             accommodation.setRented(true);
             return this.accommodationRepository.save(accommodation);
         });
+    }
+
+    @Override
+    public void refreshMaterializedView(){
+        accommodationCountByHostRepository.refreshMaterializedView();
     }
 }

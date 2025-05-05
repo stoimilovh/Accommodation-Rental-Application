@@ -1,4 +1,4 @@
-package mk.ukim.finki.emt.lab.service.domain.specification;
+package mk.ukim.finki.emt.lab.service.specification;
 
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;

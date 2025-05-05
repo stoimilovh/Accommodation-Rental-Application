@@ -5,6 +5,7 @@ import mk.ukim.finki.emt.lab.model.domain.Category;
 import mk.ukim.finki.emt.lab.model.domain.Host;
 import mk.ukim.finki.emt.lab.model.dto.CreateAccommodationDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayAccommodationDTO;
+import mk.ukim.finki.emt.lab.repository.AccommodationCountByHostRepository;
 import mk.ukim.finki.emt.lab.repository.AccommodationRepository;
 import mk.ukim.finki.emt.lab.service.application.AccommodationApplicationService;
 import mk.ukim.finki.emt.lab.service.application.HostApplicationService;
@@ -21,10 +22,12 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
 
     private final AccommodationService accommodationService;
     private final HostService hostService;
+    private final AccommodationCountByHostRepository accommodationCountByHostRepository;
 
-    public AccommodationApplicationServiceImpl(AccommodationService accommodationService, HostService hostService) {
+    public AccommodationApplicationServiceImpl(AccommodationService accommodationService, HostService hostService, AccommodationCountByHostRepository accommodationCountByHostRepository) {
         this.accommodationService = accommodationService;
         this.hostService = hostService;
+        this.accommodationCountByHostRepository = accommodationCountByHostRepository;
     }
 
     @Override
@@ -66,5 +69,9 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     @Override
     public Optional<DisplayAccommodationDTO> markAsRented(Long id){
         return accommodationService.markAsRented(id).map(DisplayAccommodationDTO::from);
+    }
+    @Override
+    public void refreshMaterializedView(){
+        accommodationCountByHostRepository.refreshMaterializedView();
     }
 }

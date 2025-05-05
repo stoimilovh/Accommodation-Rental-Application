@@ -2,25 +2,27 @@ package mk.ukim.finki.emt.lab.web;
 
 
 import io.swagger.v3.oas.annotations.Operation;
-import mk.ukim.finki.emt.lab.model.domain.Host;
 import mk.ukim.finki.emt.lab.model.dto.CreateHostDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayHostDTO;
+import mk.ukim.finki.emt.lab.model.views.HostsByCountryView;
+import mk.ukim.finki.emt.lab.projections.HostNameSurnameProjection;
+import mk.ukim.finki.emt.lab.repository.HostsByCountryRepository;
 import mk.ukim.finki.emt.lab.service.application.HostApplicationService;
-import mk.ukim.finki.emt.lab.service.domain.HostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/hosts")
 public class HostController {
 
     private final HostApplicationService hostApplicationService;
+    private final HostsByCountryRepository hostsByCountryRepository;
 
-    public HostController(HostApplicationService hostService) {
-        this.hostApplicationService = hostService;
+    public HostController(HostApplicationService hostApplicationService, HostsByCountryRepository hostsByCountryRepository) {
+        this.hostApplicationService = hostApplicationService;
+        this.hostsByCountryRepository = hostsByCountryRepository;
     }
 
     @Operation(
@@ -70,5 +72,15 @@ public class HostController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         hostApplicationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-country")
+    public List<HostsByCountryView> getAccommodationCountByHost() {
+        return hostsByCountryRepository.findAll();
+    }
+
+    @GetMapping("/names")
+    public List<HostNameSurnameProjection> getHostNames() {
+        return hostApplicationService.getAllHostNames();
     }
 }

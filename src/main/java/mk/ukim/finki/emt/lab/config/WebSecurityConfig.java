@@ -48,7 +48,10 @@ public class WebSecurityConfig {
                         "/api/hosts",
                         "/api/reviews",
                         "/api/user/login",
-                        "/api/user/register"
+                        "/api/user/register",
+                        "/api/accommodations/by-host",
+                        "/api/hosts/by-country",
+                        "/api/hosts/names"
                 ).permitAll().anyRequest().hasRole("HOST"))
                 .formLogin((form) -> form.loginProcessingUrl(
                                 "/api/user/login")

@@ -16,4 +16,5 @@ public interface AccommodationApplicationService {
     Optional<DisplayAccommodationDTO> update(Long id, CreateAccommodationDTO accommodation);
     void delete(Long id);
     Optional<DisplayAccommodationDTO> markAsRented(Long id);
+    void refreshMaterializedView();
 }

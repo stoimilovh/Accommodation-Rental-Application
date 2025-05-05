@@ -1,11 +1,9 @@
 package mk.ukim.finki.emt.lab.web;
 
 import io.swagger.v3.oas.annotations.Operation;
-import mk.ukim.finki.emt.lab.model.domain.Country;
 import mk.ukim.finki.emt.lab.model.dto.CreateCountryDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayCountryDTO;
 import mk.ukim.finki.emt.lab.service.application.CountryApplicationService;
-import mk.ukim.finki.emt.lab.service.domain.CountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

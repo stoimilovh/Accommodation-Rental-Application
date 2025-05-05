@@ -15,4 +15,5 @@ public interface AccommodationService {
     Optional<Accommodation> update(Long id, Accommodation accommodation);
     void delete(Long id);
     Optional<Accommodation>  markAsRented(Long id);
+    void refreshMaterializedView();
 }
