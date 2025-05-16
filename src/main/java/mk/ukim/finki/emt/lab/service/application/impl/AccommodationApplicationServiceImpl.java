@@ -12,7 +12,8 @@ import mk.ukim.finki.emt.lab.service.application.HostApplicationService;
 import mk.ukim.finki.emt.lab.service.domain.AccommodationService;
 import mk.ukim.finki.emt.lab.service.domain.HostService;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +39,13 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
         return accommodations.stream().map(DisplayAccommodationDTO::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<DisplayAccommodationDTO> findAll(Pageable pageable) {
+        return accommodationService.findAll(pageable)
+                .map(DisplayAccommodationDTO::from);
+    }
+
 
     @Override
     public Optional<DisplayAccommodationDTO> findById(Long id){
@@ -74,4 +82,5 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     public void refreshMaterializedView(){
         accommodationCountByHostRepository.refreshMaterializedView();
     }
+
 }

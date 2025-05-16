@@ -5,6 +5,8 @@ import mk.ukim.finki.emt.lab.model.domain.Category;
 import mk.ukim.finki.emt.lab.model.domain.Host;
 import mk.ukim.finki.emt.lab.model.dto.CreateAccommodationDTO;
 import mk.ukim.finki.emt.lab.model.dto.DisplayAccommodationDTO;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,4 +19,6 @@ public interface AccommodationApplicationService {
     void delete(Long id);
     Optional<DisplayAccommodationDTO> markAsRented(Long id);
     void refreshMaterializedView();
+
+    Page<DisplayAccommodationDTO> findAll(Pageable pageable);
 }

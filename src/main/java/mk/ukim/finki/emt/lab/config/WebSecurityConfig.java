@@ -51,13 +51,14 @@ public class WebSecurityConfig {
                         "/api/user/register",
                         "/api/accommodations/by-host",
                         "/api/hosts/by-country",
-                        "/api/hosts/names"
+                        "/api/hosts/names",
+                        "/api/accommodations/paginated"
                 ).permitAll().anyRequest().hasRole("HOST"))
                 .formLogin((form) -> form.loginProcessingUrl(
                                 "/api/user/login")
                         .permitAll()
                         .failureUrl("/api/user/login?error=BadCredentials")
-                        .defaultSuccessUrl("http://localhost:8080/api/accommodations", true))
+                        .defaultSuccessUrl("http://localhost:8081/api/accommodations", true))
                 .logout((logout) -> logout.logoutUrl("/api/user/logout")
                         .clearAuthentication(true)
                         .invalidateHttpSession(

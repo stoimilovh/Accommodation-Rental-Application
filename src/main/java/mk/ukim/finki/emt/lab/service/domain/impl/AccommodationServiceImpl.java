@@ -12,6 +12,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @Service("domainAccommodationService")
 public class AccommodationServiceImpl implements AccommodationService {
@@ -30,7 +32,6 @@ public class AccommodationServiceImpl implements AccommodationService {
     public List<Accommodation> findAll(String name, Category category, Host host, Integer numRooms, Boolean isRented) {
         Specification<Accommodation> specification = Specification.where(null);
 
-        // Add filters to the specification based on the provided parameters
         if (name != null && !name.isEmpty()) {
             specification = specification.and(FieldFilterSpecification.filterContainsText(Accommodation.class, "name", name));
         }
@@ -53,6 +54,12 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         return accommodationRepository.findAll(specification);
     }
+
+    @Override
+    public Page<Accommodation> findAll(Pageable pageable) {
+        return accommodationRepository.findAll(pageable);
+    }
+
 
     @Override
     public Optional<Accommodation> findById(Long id) {

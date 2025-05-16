@@ -10,6 +10,9 @@ import mk.ukim.finki.emt.lab.repository.AccommodationCountByHostRepository;
 import mk.ukim.finki.emt.lab.service.application.AccommodationApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 
@@ -41,6 +44,12 @@ public class AccommodationController {
 
         return displayAccommodationDTOS;
     }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<DisplayAccommodationDTO>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(accommodationApplicationService.findAll(pageable));
+    }
+
 
     @Operation(
             summary = "Get accommodation by ID",
