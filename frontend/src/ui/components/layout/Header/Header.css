@@ -1,0 +1,28 @@
+.nav-links-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.nav-button {
+    color: white;
+    text-decoration: none;
+    text-transform: capitalize;
+    font-weight: normal;
+    border-bottom: none;
+}
+
+.nav-button.active {
+    font-weight: bold;
+    border-bottom: 2px solid white;
+}
+
+.nav-links-container {
+    text-transform: capitalize;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-left: -100px;
+}

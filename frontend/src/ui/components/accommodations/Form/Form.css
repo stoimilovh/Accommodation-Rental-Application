@@ -1,0 +1,48 @@
+.MuiDialogTitle-root {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #333;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.MuiDialogContent-root {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.MuiTextField-root {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.MuiInputBase-root {
+    font-size: 1rem;
+    color: #444;
+}
+
+.MuiDialogActions-root {
+    padding: 1rem 1.5rem;
+    justify-content: flex-end;
+    border-top: 1px solid #e0e0e0;
+}
+
+.MuiButton-root {
+    text-transform: none;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.MuiButton-contained {
+    background-color: #1976d2; /* MUI primary */
+    color: white;
+}
+
+.MuiButton-contained:hover {
+    background-color: #115293;
+}
+
+.MuiButton-text {
+    color: #555;
+}

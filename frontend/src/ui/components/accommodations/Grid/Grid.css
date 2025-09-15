@@ -1,0 +1,12 @@
+.MuiGrid-root {
+    padding: 10px;
+}
+
+.accommodation-card {
+    transition: box-shadow 0.3s ease;
+    border-radius: 8px;
+}
+
+.accommodation-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
