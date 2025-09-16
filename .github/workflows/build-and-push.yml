@@ -1,33 +1,49 @@
-name: Build and Push Docker image
+name: CI - Build & Push Docker images
 
 on:
   push:
-    branches: [ "main" ] 
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: backend
+            context: backend
+            dockerfile: backend/Dockerfile
+            image: ${{ secrets.DOCKERHUB_USERNAME }}/emt-backend
+          - name: frontend
+            context: frontend
+            dockerfile: frontend/Dockerfile
+            image: ${{ secrets.DOCKERHUB_USERNAME }}/emt-frontend
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
+      - name: Set up QEMU (for buildx)
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push backend image
+      - name: Build and push image
         uses: docker/build-push-action@v4
         with:
-          context: ./backend
+          context: ${{ matrix.service.context }}
+          file: ${{ matrix.service.dockerfile }}
           push: true
-          tags: hstoimilov/emt-backend:latest
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./frontend
-          push: true
-          tags: hstoimilov/emt-frontend:latest
+          tags: |
+            ${{ matrix.service.image }}:latest
+            ${{ matrix.service.image }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
