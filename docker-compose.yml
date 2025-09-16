@@ -1,0 +1,41 @@
+version: '3'
+services:
+
+  backend:
+    build: ./backend
+    container_name: springboot_app
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/emt_rent
+      SPRING_DATASOURCE_USERNAME: emt
+      SPRING_DATASOURCE_PASSWORD: emt
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: react_app
+    ports:
+      - "3000:80"
+    environment:
+          REACT_APP_API_URL: http://backend:9090
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: emt_rent
+      POSTGRES_USER: emt
+      POSTGRES_PASSWORD: emt
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ./views.sql:/docker-entrypoint-initdb.d/views.sql
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
