@@ -5,3 +5,4 @@ metadata:
   namespace: emt-app
 data:
   SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/emt_rent
+  REACT_APP_API_URL: http://backend:9090
