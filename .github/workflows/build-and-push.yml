@@ -10,15 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service:
-          - name: backend
-            context: backend
-            dockerfile: backend/Dockerfile
-            image: ${{ secrets.DOCKERHUB_USERNAME }}/emt-backend
-          - name: frontend
-            context: frontend
-            dockerfile: frontend/Dockerfile
-            image: ${{ secrets.DOCKERHUB_USERNAME }}/emt-frontend
+        service: [backend, frontend]
 
     steps:
       - name: Checkout repo
@@ -39,11 +31,11 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v4
         with:
-          context: ${{ matrix.service.context }}
-          file: ${{ matrix.service.dockerfile }}
+          context: ${{ matrix.service }}
+          file: ${{ matrix.service }}/Dockerfile
           push: true
           tags: |
-            ${{ matrix.service.image }}:latest
-            ${{ matrix.service.image }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/emt-${{ matrix.service }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/emt-${{ matrix.service }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
